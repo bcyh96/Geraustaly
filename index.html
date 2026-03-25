@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Munich → Milan · Nov 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0c0f1a;--sur:#141826;--sur2:#1c2235;--sur3:#242b3f;
+  --bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.14);
+  --txt:#dfe4f0;--muted:#7a8299;--dim:#3d455e;
+  --gold:#d4a843;--goldl:#f0c866;--golddim:rgba(212,168,67,.13);
+}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+
+/* ── HEADER ── */
+.hdr{background:var(--sur);border-bottom:1px solid var(--bdr2);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px;}
+.hdr-brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--goldl);white-space:nowrap;}
+.hdr-sub{font-size:10px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:1px;}
+.tabs{display:flex;gap:3px;background:var(--sur3);border-radius:8px;padding:3px;flex-shrink:0;}
+.tbtn{padding:5px 13px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;background:transparent;color:var(--muted);white-space:nowrap;transition:all .18s;}
+.tbtn.on{background:var(--gold);color:#0c0f1a;}
+
+/* ── LAYOUT ── */
+.body{display:flex;flex:1;overflow:hidden;min-height:0;}
+.sb{width:210px;flex-shrink:0;background:var(--sur);border-right:1px solid var(--bdr);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sb::-webkit-scrollbar{width:3px;}.sb::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px;}
+.city-hdr{padding:10px 13px 5px;font-size:9.5px;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;position:sticky;top:0;background:var(--sur);z-index:1;}
+.day-row{padding:8px 13px;cursor:pointer;display:flex;align-items:center;gap:7px;border-left:2px solid transparent;transition:all .12s;}
+.day-row:hover{background:var(--sur2);}
+.day-row.sel{background:var(--golddim);border-left-color:var(--gold);}
+.day-row .dn{font-size:10px;color:var(--dim);width:34px;flex-shrink:0;}
+.day-row .dl{font-size:12px;color:var(--txt);}
+.day-row.sel .dl{color:var(--goldl);font-weight:500;}
+.ldot{width:5px;height:5px;border-radius:50%;margin-left:auto;flex-shrink:0;}
+.detail{flex:1;overflow-y:auto;overflow-x:hidden;padding:22px 24px;-webkit-overflow-scrolling:touch;}
+.detail::-webkit-scrollbar{width:3px;}.detail::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px;}
+
+/* ── COMMON ── */
+.sec-title{font-size:9.5px;font-weight:600;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--bdr);}
+.sec{margin-bottom:18px;}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;margin-bottom:16px;}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;border:1px solid;}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.chip{background:var(--sur3);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted);}
+.chip strong{color:var(--txt);}
+
+/* ── DAY SUMMARY STRIP ── */
+.day-summary{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;padding:10px 14px;background:var(--sur2);border-radius:8px;border-left:3px solid var(--gold);}
+
+/* ── TRANSPORT ── */
+.t-card{background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:13px;}
+.t-opts{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.t-opt{padding:6px 12px;border-radius:6px;border:1px solid var(--bdr2);cursor:pointer;font-size:11.5px;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .12s;}
+.t-opt:hover,.t-opt:active{border-color:var(--gold);color:var(--txt);}
+.t-opt.on{background:var(--golddim);border-color:var(--gold);color:var(--goldl);}
+.t-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.t-dur{font-size:13px;color:var(--txt);font-weight:500;}
+.t-cost{font-size:12px;color:var(--gold);font-weight:600;}
+.t-note{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;line-height:1.5;}
+
+/* ── ACTIVITIES ── */
+.acts{display:flex;flex-direction:column;gap:7px;}
+.act{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:11px 13px;display:flex;gap:11px;cursor:pointer;transition:border-color .12s;}
+.act:hover,.act:active{border-color:var(--bdr2);}
+.act:hover .eh{opacity:1;}
+.act-ico{font-size:18px;flex-shrink:0;margin-top:1px;}
+.act-time{font-size:9.5px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1px;}
+.act-name{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:2px;}
+.act-desc{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+/* ── FOOD ── */
+.foods{display:flex;flex-direction:column;gap:7px;}
+.food-row{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:10px 13px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;cursor:pointer;transition:border-color .12s;}
+.food-row:hover,.food-row:active{border-color:var(--bdr2);}
+.food-row:hover .eh{opacity:1;}
+.food-l{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;}
+.food-ico{font-size:15px;flex-shrink:0;margin-top:1px;}
+.food-meal{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.food-name{font-size:12.5px;color:var(--txt);font-weight:500;}
+.food-desc{font-size:11px;color:var(--muted);}
+.food-sgd{font-size:12.5px;color:var(--gold);font-weight:600;white-space:nowrap;flex-shrink:0;}
+.eh{font-size:10px;color:var(--muted);opacity:0;transition:opacity .15s;flex-shrink:0;padding-left:4px;}
+
+/* ── EDIT FORM ── */
+.edit-card{background:var(--sur2);border:1px solid var(--gold);border-radius:8px;padding:13px;display:flex;flex-direction:column;gap:8px;}
+.edit-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.edit-lbl{font-size:10px;color:var(--muted);width:44px;flex-shrink:0;font-weight:500;}
+.edit-inp{background:var(--sur3);border:1px solid var(--bdr2);border-radius:5px;padding:6px 9px;font-size:16px;color:var(--txt);font-family:'DM Sans',sans-serif;flex:1;min-width:60px;outline:none;}
+.edit-inp:focus{border-color:var(--gold);}
+.edit-inp.emoji{width:46px;flex:none;text-align:center;}
+.edit-ta{background:var(--sur3);border:1px solid var(--bdr2);border-radius:5px;padding:6px 9px;font-size:16px;color:var(--txt);font-family:'DM Sans',sans-serif;flex:1;outline:none;resize:vertical;min-height:60px;line-height:1.5;width:100%;}
+.edit-ta:focus{border-color:var(--gold);}
+.edit-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.ebtn{padding:7px 15px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .12s;}
+.ebtn-save{background:var(--gold);color:#0c0f1a;}
+.ebtn-cancel{background:var(--sur3);color:var(--muted);border:1px solid var(--bdr2);}
+.ebtn-del{background:rgba(251,113,133,.1);color:#fb7185;border:1px solid rgba(251,113,133,.2);margin-left:auto;}
+.add-btn{display:flex;align-items:center;gap:6px;padding:10px 13px;background:transparent;border:1px dashed var(--bdr2);border-radius:7px;color:var(--muted);font-size:11.5px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;transition:all .12s;margin-top:4px;}
+.add-btn:hover,.add-btn:active{border-color:var(--gold);color:var(--goldl);background:var(--golddim);}
+
+/* ── ACCOMMODATION ── */
+.accom-card{background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:13px;}
+.inp-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;}
+.inp-lbl{font-size:11px;color:var(--muted);width:55px;flex-shrink:0;font-weight:500;}
+.t-inp{background:var(--sur3);border:1px solid var(--bdr2);border-radius:6px;padding:7px 10px;font-size:16px;color:var(--txt);font-family:'DM Sans',sans-serif;flex:1;min-width:0;outline:none;}
+.t-inp:focus{border-color:var(--gold);}
+.t-inp::placeholder{color:var(--dim);}
+.booked-lbl{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11.5px;color:var(--muted);white-space:nowrap;}
+.chk{width:20px;height:20px;border:1px solid var(--bdr2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .12s;cursor:pointer;}
+.chk.on{background:var(--gold);border-color:var(--gold);color:#0c0f1a;}
+.suggest-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+.sg-btn{background:var(--sur3);border:1px solid var(--bdr);border-radius:20px;padding:5px 11px;font-size:10.5px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;}
+.sg-btn:hover,.sg-btn:active{border-color:var(--gold);color:var(--goldl);}
+
+/* ── TIP ── */
+.tip{background:var(--golddim);border:1px solid rgba(212,168,67,.18);border-radius:8px;padding:10px 13px;font-size:11.5px;color:var(--muted);line-height:1.6;display:flex;gap:8px;}
+
+/* ── BUDGET ── */
+.budget{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.bscroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
+.bscroll::-webkit-scrollbar{width:3px;height:3px;}.bscroll::-webkit-scrollbar-thumb{background:var(--bdr2);}
+.btable{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:500px;}
+.btable th{text-align:right;padding:9px 12px;font-size:9.5px;font-weight:600;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;background:var(--sur);border-bottom:1px solid var(--bdr2);position:sticky;top:0;z-index:2;white-space:nowrap;}
+.btable th:first-child{text-align:left;}
+.btable td{padding:8px 12px;border-bottom:1px solid var(--bdr);color:var(--txt);vertical-align:middle;}
+.btable tr:hover td{background:var(--sur2);cursor:pointer;}
+.b-inp{background:var(--sur3);border:1px solid transparent;border-radius:5px;padding:4px 6px;font-size:12px;color:var(--txt);font-family:'DM Sans',sans-serif;width:65px;text-align:right;outline:none;}
+.b-inp:focus{border-color:var(--gold);background:var(--sur2);}
+.b-dc{font-weight:500;font-size:12px;}.b-dc2{font-size:10px;color:var(--muted);margin-top:1px;}
+.b-tot{font-weight:600;color:var(--gold);text-align:right;}
+.gtotal{background:var(--sur);border-top:1px solid var(--bdr2);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px;}
+.gt-lbl{font-size:12px;color:var(--muted);}.gt-sub{font-size:10px;color:var(--dim);margin-top:2px;}
+.gt-amt{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--goldl);font-weight:600;}
+.gt-per{font-size:10px;color:var(--muted);margin-top:1px;text-align:right;}
+
+/* ── OVERVIEW (cover page) ── */
+.overview{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.overview::-webkit-scrollbar{width:3px;}.overview::-webkit-scrollbar-thumb{background:var(--bdr2);}
+.ov-hero{position:relative;padding:36px 28px 28px;border-bottom:1px solid var(--bdr);overflow:hidden;background:linear-gradient(150deg,#0d1225 0%,#1a1230 55%,#0c1a10 100%);}
+.ov-hero::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1200&q=40') center/cover no-repeat;opacity:.08;pointer-events:none;}
+.ov-kicker{font-size:10px;color:var(--gold);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;position:relative;}
+.ov-title{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:500;color:var(--txt);line-height:1.0;margin-bottom:5px;position:relative;}
+.ov-subtitle{font-size:13px;color:var(--muted);margin-bottom:24px;position:relative;}
+.ov-flights{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;position:relative;}
+.ov-flight{background:rgba(255,255,255,.05);border:1px solid var(--bdr2);border-radius:9px;padding:10px 14px;display:flex;align-items:center;gap:11px;}
+.ov-fl-ico{font-size:22px;}
+.ov-fl-num{font-size:14px;font-weight:600;color:var(--goldl);}
+.ov-fl-route{font-size:11px;color:var(--muted);margin-top:1px;}
+.ov-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;position:relative;}
+.ov-stat{background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:9px;padding:12px 13px;}
+.ov-stat-val{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--goldl);font-weight:500;line-height:1;}
+.ov-stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.08em;}
+.ov-cities-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;padding:20px 28px;border-bottom:1px solid var(--bdr);}
+.ov-city-card{border-radius:10px;overflow:hidden;position:relative;height:130px;background:var(--sur2);}
+.ov-city-card img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.65);}
+.ov-city-flag{position:absolute;top:8px;right:9px;font-size:18px;}
+.ov-city-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(0deg,rgba(0,0,0,.8),transparent);}
+.ov-city-name{font-family:'Cormorant Garamond',serif;font-size:19px;color:#fff;font-weight:500;line-height:1.1;}
+.ov-city-nights{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px;}
+.ov-section{padding:20px 28px;border-bottom:1px solid var(--bdr);}
+.ov-highlights{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+.ov-hl{display:flex;gap:12px;align-items:flex-start;}
+.ov-hl-ico{font-size:18px;flex-shrink:0;margin-top:1px;}
+.ov-hl-body strong{color:var(--txt);display:block;font-size:13px;margin-bottom:2px;}
+.ov-hl-body span{font-size:12px;color:var(--muted);line-height:1.5;}
+.ov-legs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:12px;}
+.ov-leg{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;}
+.ov-leg-route{font-size:12px;font-weight:600;color:var(--txt);}
+.ov-leg-detail{font-size:10.5px;color:var(--muted);margin-top:3px;}
+.ov-days-list{display:flex;flex-direction:column;gap:0;margin-top:12px;}
+.ov-day-row{display:flex;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr);}
+.ov-day-row:last-child{border-bottom:none;}
+.ov-day-label{font-size:11px;font-weight:600;color:var(--gold);width:50px;flex-shrink:0;}
+.ov-day-city{font-size:11px;color:var(--muted);width:80px;flex-shrink:0;}
+.ov-day-summary{font-size:12px;color:var(--txt);line-height:1.4;flex:1;}
+
+/* ── MOBILE NAV ── */
+.mob-nav{display:none;gap:5px;margin-bottom:14px;align-items:center;}
+.arr-btn{background:var(--sur2);border:1px solid var(--bdr2);border-radius:6px;padding:8px 14px;color:var(--txt);cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.arr-btn:active{border-color:var(--gold);color:var(--gold);}
+.arr-btn:disabled{opacity:.3;pointer-events:none;}
+.mob-days-btn{flex:1;background:var(--sur2);border:1px solid var(--bdr2);border-radius:6px;padding:8px 10px;color:var(--muted);cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;text-align:center;-webkit-tap-highlight-color:transparent;}
+/* ── MOBILE DRAWER ── */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;}
+.mob-drawer{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--sur);border-top:1px solid var(--bdr2);z-index:100;max-height:60vh;transform:translateY(100%);transition:transform .25s ease;}
+.mob-drawer.open{transform:translateY(0);}
+.mob-overlay.open{display:block;}
+.mob-drawer-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--bdr);}
+.mob-drawer-title{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+.mob-drawer-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 8px;}
+.mob-drawer-scroll{overflow-y:auto;max-height:calc(60vh - 44px);-webkit-overflow-scrolling:touch;}
+
+@media(max-width:700px){
+  .sb{display:none;}
+  .mob-nav{display:flex;}
+  .mob-drawer{display:block;}
+  .detail{padding:14px 15px;}
+  .hdr-sub{display:none;}
+  .hdr-brand{font-size:15px;}
+  .tbtn{padding:5px 8px;font-size:10px;}
+  .ov-hero{padding:22px 16px 20px;}
+  .ov-title{font-size:32px;}
+  .ov-cities-grid{grid-template-columns:repeat(2,1fr);padding:14px 15px;gap:8px;}
+  .ov-city-card{height:105px;}
+  .ov-stats{grid-template-columns:repeat(2,1fr);}
+  .ov-section{padding:14px 15px;}
+  .ov-legs{grid-template-columns:1fr;}
+  input,textarea{font-size:16px!important;}
+  .bscroll{overflow-x:auto;}
+  .gtotal{padding:10px 14px;}
+  .gt-amt{font-size:22px;}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+const SK = "muc-mil-v5";
+
+// ─── STATIC DATA ─────────────────────────────────────────────────────────────
+
+const CITIES = [
+  {id:"munich",   name:"Munich",    flag:"🇩🇪", nights:2, img:"1467269204594-9661b134dd2b"},
+  {id:"salzburg", name:"Salzburg",  flag:"🇦🇹", nights:2, img:"1564507592333-c60657eea523"},
+  {id:"hallstatt",name:"Hallstatt", flag:"🇦🇹", nights:2, img:"1506905925346-21bda4d32df4"},
+  {id:"innsbruck",name:"Innsbruck", flag:"🇦🇹", nights:2, img:"1595079676339-1534801ad6cf"},
+  {id:"bolzano",  name:"Bolzano",   flag:"🇮🇹", nights:2, img:"1523906834658-41252f8adea5"},
+  {id:"verona",   name:"Verona",    flag:"🇮🇹", nights:2, img:"1558618666-fcd25c85cd64"},
+  {id:"milan",    name:"Milan",     flag:"🇮🇹", nights:2, img:"1513581166391-887a96ddeafd"},
+];
+
+const LEGS = {
+  "munich-salzburg":   {opts:[
+    {ico:"🚂",lbl:"Train (Railjet)",    dur:"1h 30m", min:40, max:55, note:"Pick up rental car at Salzburg Hbf on arrival"},
+    {ico:"🚗",lbl:"Rental car",         dur:"1h 45m", min:55, max:85, note:"Via A8 autobahn — not as scenic"},
+    {ico:"🚌",lbl:"FlixBus",            dur:"2h",     min:15, max:25, note:"Cheapest option"},
+  ]},
+  "salzburg-hallstatt":{opts:[
+    {ico:"🚗",lbl:"Rental car (scenic)",dur:"1h 30m", min:0,  max:0,  note:"Included in hire. Via Salzkammergut — stop at St. Wolfgang & Bad Ischl"},
+    {ico:"🚌",lbl:"Bus + Ferry",         dur:"2h 30m", min:15, max:22, note:"Bus to dock, short ferry across the lake"},
+  ]},
+  "hallstatt-innsbruck":{opts:[
+    {ico:"🚗",lbl:"Scenic alpine drive", dur:"2h 30m", min:0,  max:0,  note:"Via Zell am See & Kitzbühel. Drop car in Innsbruck — done driving!"},
+    {ico:"🚌",lbl:"Bus + Train",          dur:"4h+",    min:35, max:55, note:"Multiple connections — complicated with luggage"},
+  ]},
+  "innsbruck-bolzano": {opts:[
+    {ico:"🚂",lbl:"Train (Brenner Pass)",dur:"2h",     min:30, max:45, note:"One of Europe's most scenic rail journeys"},
+    {ico:"🚌",lbl:"Bus",                  dur:"2h 30m", min:15, max:25, note:"Less scenic but cheaper"},
+    {ico:"🚗",lbl:"Rental car",           dur:"1h 45m", min:60, max:100,note:"Cross-border fees may apply"},
+  ]},
+  "bolzano-verona":    {opts:[
+    {ico:"🚂",lbl:"Train (Trenitalia)",  dur:"1h 30m", min:20, max:30, note:"Direct service, very comfortable"},
+    {ico:"🚌",lbl:"Bus (Flixbus)",        dur:"2h 15m", min:12, max:18, note:"Cheaper but slower"},
+  ]},
+  "verona-milan":      {opts:[
+    {ico:"🚄",lbl:"Frecciarossa",        dur:"1h 25m", min:25, max:40, note:"High-speed. Book early for best fares."},
+    {ico:"🚂",lbl:"Regional train",      dur:"1h 55m", min:10, max:18, note:"Slower, no booking needed"},
+    {ico:"🚗",lbl:"Rental car",          dur:"1h 45m", min:60, max:90, note:"Via A4 motorway"},
+  ]},
+};
+
+const ACCOM_SUGS = {
+  munich:   ["Hotel Bayerischer Hof","25hours Hotel Royal Bavarian","Mandarin Oriental Munich","Hotel Anna"],
+  salzburg: ["Hotel Goldener Hirsch","Sacher Salzburg","Hotel Stein","arte vida"],
+  hallstatt:["Seehotel Grüner Baum","Heritage Hotel Hallstatt","Landhaus zu Appesbach"],
+  innsbruck:["Hotel Innsbruck","Adlers Design Hotel","Grand Hotel Europa","mooser hotel"],
+  bolzano:  ["Hotel Laurin","Parkhotel Laurin","Stadt Hotel Citta","Hotel Greif"],
+  verona:   ["Hotel Gabbia d'Oro","Due Torri Hotel","Hotel Accademia","Giulietta & Romeo"],
+  milan:    ["Armani Hotel Milano","Hotel Spadari al Duomo","Mandarin Oriental Milan","Brera Apartments"],
+};
+
+const DAYS = [
+  {id:1, label:"Day 1",  date:"Mon 9 Nov",  city:"Munich",    cityId:"munich",    flag:"🇩🇪", load:"light",    leg:null,
+   summary:"Arrive on SQ328, S-Bahn to the city, easy evening stroll around Marienplatz to shake off the flight.",
+   acts:[
+    {ico:"✈️",time:"Arrive",    name:"SQ328 · Singapore → Munich", desc:"Singapore Airlines SQ328 lands at MUC. Take S-Bahn S1/S8 to city centre — about 45 min, ~SGD 15."},
+    {ico:"🏨",time:"Afternoon", name:"Check In & Rest",             desc:"Adjust to European time. Don't over-plan today — jet lag is real."},
+    {ico:"🏛️",time:"Evening",   name:"Marienplatz Stroll",          desc:"The medieval heart of Munich. Watch for the Glockenspiel on the Neues Rathaus facade at dusk."},
+   ],
+   food:[{ico:"🍺",meal:"Dinner",    name:"Glockenspielviertel",       desc:"Weisswurst, pretzels and a Masskrug of local beer",est:40}],
+   tip:"SQ328 is a long haul — try to sleep on the plane. Get to the hotel, take a short walk, eat well, sleep early. Munich proper starts tomorrow.",
+  },
+  {id:2, label:"Day 2",  date:"Tue 10 Nov", city:"Munich",    cityId:"munich",    flag:"🇩🇪", load:"light",    leg:null,
+   summary:"Full Munich day — iconic food market, the original 1589 Hofbräuhaus, then the vast Englischer Garten.",
+   acts:[
+    {ico:"🛒",time:"Morning",   name:"Viktualienmarkt",    desc:"Munich's legendary open-air food market — perfect for a local breakfast among the stallholders."},
+    {ico:"🍺",time:"Midday",    name:"Hofbräuhaus",        desc:"The original 1589 beer hall. Touristy, yes — but unmissable once. Order the Weisswurst and a Mass."},
+    {ico:"🌳",time:"Afternoon", name:"Englischer Garten",  desc:"Larger than Central Park, stunning in autumn colours. Don't miss surfers on the Eisbach river wave near the southern end."},
+   ],
+   food:[
+    {ico:"🥨",meal:"Breakfast", name:"Viktualienmarkt stalls",   desc:"Fresh bread, local cheeses, coffee at the market",est:15},
+    {ico:"🍺",meal:"Lunch",     name:"Hofbräuhaus",               desc:"Classic beer hall lunch — pork knuckle or Schweinebraten",est:35},
+    {ico:"🍽️",meal:"Dinner",   name:"Schwabing neighbourhood",   desc:"Quieter, local feel. Ask the hotel for a neighbourhood recommendation.",est:45},
+   ],
+   tip:"Hofbräuhaus: walk-in works fine. Englischer Garten is completely free. Surfing on the Eisbach is one of Munich's best quirks.",
+  },
+  {id:3, label:"Day 3",  date:"Wed 11 Nov", city:"Salzburg",  cityId:"salzburg",  flag:"🇦🇹", load:"moderate", leg:"munich-salzburg",
+   summary:"Train to Salzburg and collect the rental car, baroque gardens and UNESCO old town, fortress views at dusk.",
+   acts:[
+    {ico:"🚂",time:"Morning",   name:"Train / Drive to Salzburg",      desc:"Railjet from Munich Hbf — scenic, direct, comfortable. Collect rental car at Salzburg Hbf on arrival."},
+    {ico:"🌹",time:"Afternoon", name:"Mirabell Palace & Gardens",       desc:"Baroque gardens where Mozart played as a child. Also a Sound of Music filming location — the steps are there."},
+    {ico:"🏰",time:"Afternoon", name:"Altstadt (Old Town)",             desc:"Cross the Salzach river into the UNESCO World Heritage Old Town. Narrow lanes, tall baroque facades."},
+    {ico:"🏯",time:"Evening",   name:"Hohensalzburg Fortress",          desc:"Walk up (or funicular) for panoramic views over the city and river valley at dusk."},
+   ],
+   food:[
+    {ico:"🥨",meal:"Lunch",  name:"Altstadt café or Gasthof",       desc:"Schnitzel, pretzels, local Augustiner beer",est:30},
+    {ico:"🍷",meal:"Dinner", name:"Restaurant near Getreidegasse",   desc:"Classic Austrian dinner — Tafelspitz or Salzburger Nockerl for dessert",est:50},
+   ],
+   tip:"Pick up the car at Salzburg Hbf. Buy the Austrian vignette toll sticker (~€15–20 for 10 days) — you'll need it for the motorway.",
+  },
+  {id:4, label:"Day 4",  date:"Thu 12 Nov", city:"Salzburg",  cityId:"salzburg",  flag:"🇦🇹", load:"light",    leg:null,
+   summary:"Mozart's birthplace on the golden lane, trick fountains at Hellbrunn, then Augustinerbräu with the locals.",
+   acts:[
+    {ico:"🎵",time:"Morning",   name:"Mozart's Birthplace",  desc:"Getreidegasse 9 — the narrow golden lane where he was born in 1756. Museum covers his childhood and early compositions."},
+    {ico:"⛲",time:"Afternoon", name:"Hellbrunn Palace",      desc:"20-min drive from centre. Famous for its trick fountains and autumnal grounds. Check if fountains are running in November."},
+    {ico:"🍺",time:"Evening",   name:"Augustinerbräu",        desc:"One of Europe's largest monastery beer halls. Bring food or buy from the stalls. Locals pack this place."},
+   ],
+   food:[
+    {ico:"☕",meal:"Breakfast", name:"Café Tomaselli",          desc:"Salzburg's oldest café — coffee and pastry in the Altstadt",est:15},
+    {ico:"🥗",meal:"Lunch",     name:"Hellbrunn Palace area",   desc:"Lunch near the palace gardens",est:28},
+    {ico:"🍺",meal:"Evening",   name:"Augustinerbräu",          desc:"Get your beer, grab food from the stalls. Budget for a couple of Masskrugs.",est:22},
+   ],
+   tip:"Hellbrunn trick fountains may not run in November — check ahead. Augustinerbräu is a genuine locals' institution. Bring cash.",
+  },
+  {id:5, label:"Day 5",  date:"Fri 13 Nov", city:"Hallstatt", cityId:"hallstatt", flag:"🇦🇹", load:"moderate", leg:"salzburg-hallstatt",
+   summary:"Scenic drive through the Salzkammergut lake district — arrive Hallstatt as the last day-trippers leave.",
+   acts:[
+    {ico:"🚗",time:"Morning",   name:"Scenic Drive to Hallstatt", desc:"Via Salzkammergut lake district. Stop at St. Wolfgang (30 min) and Bad Ischl (coffee) on the way."},
+    {ico:"🏘️",time:"Afternoon", name:"Hallstatt Village",          desc:"Park at P1 and walk in. The waterfront and market square are magical. Arriving mid-afternoon avoids day-trip crowds entirely."},
+    {ico:"🏛️",time:"Afternoon", name:"Hallstatt Museum",           desc:"7,000 years of salt mining history in this tiny village. Extraordinary prehistoric collection."},
+    {ico:"🌙",time:"Evening",   name:"The Village After Dark",     desc:"Day visitors leave entirely by 5pm in November. The village is yours — utterly peaceful."},
+   ],
+   food:[
+    {ico:"☕",meal:"Lunch stop", name:"Bad Ischl café",                        desc:"Coffee and cake on the drive — former summer resort of Emperor Franz Joseph",est:18},
+    {ico:"🐟",meal:"Dinner",     name:"Seehotel Grüner Baum or Bräu-Gasthof", desc:"Lakeside dinner — fresh local fish, Austrian mains",est:55},
+   ],
+   tip:"Park at Hallstatt P1 and walk 5 mins. Arriving mid-afternoon on a weekday = almost zero crowds. November is magic here.",
+  },
+  {id:6, label:"Day 6",  date:"Sat 14 Nov", city:"Hallstatt", cityId:"hallstatt", flag:"🇦🇹", load:"light",    leg:null,
+   summary:"Funicular to the 1,148m Skywalk, descend into the ancient salt mine, then a slow lakeside afternoon.",
+   acts:[
+    {ico:"🚠",time:"Morning",   name:"Salzbergbahn Funicular", desc:"Ride up to the World Heritage Skywalk at 1,148m — extraordinary views over the Hallstätter See and surrounding peaks."},
+    {ico:"⛏️",time:"Midday",   name:"Salt Mine Tour",         desc:"One of the world's oldest mines — still operational after 7,000 years. Underground wooden slides, miners' lamps included."},
+    {ico:"☕",time:"Afternoon", name:"Lakeside Afternoon",     desc:"Coffee, wander, read by the lake. Pure downtime. No rushing anywhere — this is the rest day."},
+   ],
+   food:[
+    {ico:"🥐",meal:"Breakfast", name:"Village bakery",                    desc:"Simple local breakfast before heading up the mountain",est:12},
+    {ico:"🥗",meal:"Lunch",     name:"Salt mine café or Rudolfsturm",     desc:"Lunch at the top — simple Austrian food with a view",est:25},
+    {ico:"🐟",meal:"Dinner",    name:"Lakeside restaurant",               desc:"Final Hallstatt dinner — the lake is beautiful in November light",est:55},
+   ],
+   tip:"Book funicular + salt mine tickets online in advance. The combo is worth it. Afternoon is genuinely for doing nothing — Hallstatt rewards stillness.",
+  },
+  {id:7, label:"Day 7",  date:"Sun 15 Nov", city:"Innsbruck", cityId:"innsbruck", flag:"🇦🇹", load:"moderate", leg:"hallstatt-innsbruck",
+   summary:"The most scenic drive of the trip: Zell am See and Kitzbühel, then drop the car in Innsbruck — no more driving.",
+   acts:[
+    {ico:"🚗",time:"Morning",   name:"Alpine Drive to Innsbruck", desc:"Hallstatt → Bad Aussee → Zell am See (coffee, 30 min) → Kitzbühel (brief stop) → Innsbruck. Pure alpine scenery."},
+    {ico:"☕",time:"Midday",    name:"Coffee in Zell am See",     desc:"The lake-side town is stunning even in November — worth 30–45 minutes of wandering."},
+    {ico:"🔑",time:"Afternoon", name:"Drop the Rental Car",       desc:"Return the car in Innsbruck. Done driving for the entire trip. Trains from here."},
+    {ico:"🏙️",time:"Afternoon", name:"Innsbruck Altstadt",        desc:"The Goldenes Dachl (2,657 gilded copper tiles), Maria-Theresien-Strasse and the jaw-dropping mountain backdrop."},
+   ],
+   food:[
+    {ico:"☕",meal:"Midday",  name:"Zell am See lakeside café",     desc:"Stop on the alpine drive",est:22},
+    {ico:"🥩",meal:"Dinner",  name:"Wood-panelled Gasthaus, Altstadt", desc:"Tiroler Gröstl (pan-fried potato & meat), local Schnapps",est:42},
+   ],
+   tip:"Don't take the motorway direct — via Zell am See adds only 20 min and is incomparably more beautiful. Last driving day — savour it.",
+  },
+  {id:8, label:"Day 8",  date:"Mon 16 Nov", city:"Innsbruck", cityId:"innsbruck", flag:"🇦🇹", load:"light",    leg:null,
+   summary:"Gondola to 2,256m over the city, Hofburg palace, then Zaha Hadid's ski jump with panoramic valley views.",
+   acts:[
+    {ico:"🏔️",time:"Morning",   name:"Nordkette Gondola",      desc:"Cable car up to 2,256m above the city. Views of the entire Inn Valley. Snow likely in November — dress warmly."},
+    {ico:"🏰",time:"Afternoon", name:"Hofburg Imperial Palace", desc:"Habsburg imperial rooms — opulent and detailed. Combined ticket with the court church is worth it."},
+    {ico:"🎿",time:"Afternoon", name:"Bergisel Ski Jump",       desc:"Designed by Zaha Hadid — a striking piece of architecture perched on the hill. Panoramic views even if you're not a ski fan."},
+   ],
+   food:[
+    {ico:"☕",meal:"Breakfast", name:"Altstadt café",                       desc:"Austrian breakfast — cold cuts, cheese, fresh Semmel rolls, strong coffee",est:15},
+    {ico:"🏔️",meal:"Lunch",    name:"Nordkette mountain restaurant",       desc:"Lunch at altitude with extraordinary views — worth the premium",est:38},
+    {ico:"🍷",meal:"Dinner",   name:"Gasthaus Weißes Rössl or similar",    desc:"Tiroler Gröstl, Kaiserschmarrn dessert, local Schnapps",est:48},
+   ],
+   tip:"Nordkette: go first thing for best visibility. Hofburg + Bergisel can both be done in a single afternoon. Innsbruck is compact.",
+  },
+  {id:9, label:"Day 9",  date:"Tue 17 Nov", city:"Bolzano",   cityId:"bolzano",   flag:"🇮🇹", load:"moderate", leg:"innsbruck-bolzano",
+   summary:"Brenner Pass train into Italy, meet Ötzi the 5,300-year-old Iceman, first Italian aperitivo at Piazza Walther.",
+   acts:[
+    {ico:"🚂",time:"Morning",   name:"Train via Brenner Pass",      desc:"ÖBB/Trenitalia — one of Europe's most scenic rail journeys. Culture shifts from Austrian to Italian as you descend south."},
+    {ico:"🧊",time:"Afternoon", name:"Ötzi the Iceman Museum",      desc:"South Tyrol Museum of Archaeology — a 5,300-year-old mummy found in the Alps in 1991. One of Europe's most remarkable museums. Book ahead."},
+    {ico:"🥂",time:"Evening",   name:"Aperitivo at Piazza Walther", desc:"Your first proper Italian aperitivo ritual — spritz, olives, people-watching in the arcaded square."},
+   ],
+   food:[
+    {ico:"🥗",meal:"Lunch",  name:"Bolzano — Piazza delle Erbe",       desc:"First Italian lunch — schnitzel and pasta both on menus here",est:28},
+    {ico:"🍝",meal:"Dinner", name:"Traditional Südtiroler restaurant", desc:"Canederli (bread dumplings), Speck, and local Lagrein red wine",est:48},
+   ],
+   tip:"Ötzi museum: pre-book tickets — fills up. The city feels like nowhere else: Italian piazzas, German signage, Austrian architecture, all at once.",
+  },
+  {id:10,label:"Day 10", date:"Wed 18 Nov", city:"Bolzano",   cityId:"bolzano",   flag:"🇮🇹", load:"light",    leg:null,
+   summary:"Gondola to the Renon plateau for sweeping Dolomite views, afternoon in the Val Gardena valley.",
+   acts:[
+    {ico:"🚠",time:"Morning",   name:"Ritten Gondola to Renon Plateau", desc:"From central Bolzano, gondola up to the Renon plateau — sweeping Dolomite views. Seriously underrated gem."},
+    {ico:"⛰️",time:"Afternoon", name:"Val Gardena",                      desc:"Bus or drive into the Dolomite gateway valley. Spectacular even in November — the rock formations are extraordinary."},
+    {ico:"🍷",time:"Evening",   name:"Back in Bolzano",                  desc:"Final South Tyrol dinner. Try a Gewürztraminer from the Terlaner Kellerei tonight."},
+   ],
+   food:[
+    {ico:"☕",meal:"Breakfast", name:"Bolzano café bar",                        desc:"First proper Italian espresso standing at the bar — don't sit, it's cheaper and more authentic",est:5},
+    {ico:"🏔️",meal:"Lunch",    name:"Renon plateau or Val Gardena lodge",      desc:"Alpine lunch with views",est:30},
+    {ico:"🍝",meal:"Dinner",   name:"Bolzano trattoria",                       desc:"Try the Käsespätzle if you haven't yet",est:50},
+   ],
+   tip:"Ritten gondola is seriously underrated. Val Gardena by Südtirol bus is possible — check schedules at suedtirolmobil.info",
+  },
+  {id:11,label:"Day 11", date:"Thu 19 Nov", city:"Verona",    cityId:"verona",    flag:"🇮🇹", load:"moderate", leg:"bolzano-verona",
+   summary:"Train into Verona, a 1st-century Roman arena still standing, Juliet's balcony, first proper Veneto dinner.",
+   acts:[
+    {ico:"🚂",time:"Morning",   name:"Train to Verona",              desc:"Trenitalia Bolzano → Verona (~1.5h). Direct service, very comfortable."},
+    {ico:"🏟️",time:"Afternoon", name:"Piazza Bra & Roman Arena",     desc:"A 1st-century AD amphitheatre in near-perfect condition — one of the best preserved in the world. Walk around and inside."},
+    {ico:"💌",time:"Afternoon", name:"Juliet's House (Casa di Giulietta)", desc:"Touristy but genuinely charming — the balcony, the bronze Juliet statue, the wall covered in love letters and locks."},
+   ],
+   food:[
+    {ico:"🍕",meal:"Lunch",  name:"Near Piazza Bra",                desc:"First taste of the Veneto — risotto all'Amarone or simple pizza",est:25},
+    {ico:"🍝",meal:"Dinner", name:"Traditional Veronese trattoria", desc:"Bigoli con pastissada de caval (horsemeat ragù), Soave or Valpolicella wine",est:55},
+   ],
+   tip:"The Roman Arena is best at dusk when the warm stone glows. Juliet's House: go late afternoon to beat the Instagram crowd. Verona is seriously underrated.",
+  },
+  {id:12,label:"Day 12", date:"Fri 20 Nov", city:"Verona",    cityId:"verona",    flag:"🇮🇹", load:"light",    leg:null,
+   summary:"Castelvecchio's superb art museum, the Roman bridge to the quiet north bank, aperitivo at Piazza delle Erbe.",
+   acts:[
+    {ico:"🏰",time:"Morning",   name:"Castelvecchio",          desc:"14th-century Scaligeri castle on the Adige — superb art museum inside. Pisanello, Mantegna, Bellini. One of the best small museums in Italy."},
+    {ico:"🌉",time:"Afternoon", name:"Ponte Pietra & North Bank", desc:"Walk across the Roman bridge and explore the hillside neighbourhood on the north bank — far fewer tourists, beautiful views."},
+    {ico:"🥂",time:"Evening",   name:"Aperitivo at Piazza delle Erbe", desc:"The most beautiful square in Verona — colonnaded bars, the Roman column, market stalls. Full of local life in November."},
+   ],
+   food:[
+    {ico:"☕",meal:"Breakfast", name:"Italian café bar, standing",       desc:"Espresso + cornetto — the Italian morning ritual",est:5},
+    {ico:"🥗",meal:"Lunch",     name:"North bank, quieter side",         desc:"Local osteria or trattoria with views",est:28},
+    {ico:"🍷",meal:"Dinner",    name:"Enoteca near Piazza delle Erbe",   desc:"Wine bar dinner — Amarone della Valpolicella is from this region",est:65},
+   ],
+   tip:"Castelvecchio is genuinely excellent — don't skip it for another gelato. November in Verona = almost no tourists. The Ponte Pietra walk gives the best overview.",
+  },
+  {id:13,label:"Day 13", date:"Sat 21 Nov", city:"Milan",     cityId:"milan",     flag:"🇮🇹", load:"moderate", leg:"verona-milan",
+   summary:"Frecciarossa into Milan, Gothic Duomo rooftops with the Alps in the distance, Brera for the last dinner.",
+   acts:[
+    {ico:"🚄",time:"Morning",   name:"Frecciarossa to Milan",            desc:"High-speed train Verona Porta Nuova → Milano Centrale (~1h 25m). Sit back, relax, watch the Po plain pass by."},
+    {ico:"⛪",time:"Afternoon", name:"Milan Duomo",                       desc:"Gothic cathedral took 600 years to build. Walk the rooftop terraces — the Alps are visible on a clear November day. Book tickets in advance."},
+    {ico:"🛍️",time:"Afternoon", name:"Galleria Vittorio Emanuele II",    desc:"The world's oldest shopping mall (1877) — even if you're not shopping, the iron-and-glass arcade and mosaic floors are extraordinary."},
+    {ico:"🌆",time:"Evening",   name:"Brera Neighbourhood",               desc:"Milan's bohemian quarter — art galleries, aperitivo bars, great restaurants. This is where to spend your last evening."},
+   ],
+   food:[
+    {ico:"🥗",meal:"Lunch",     name:"Near Duomo or Brera",  desc:"First Milanese lunch — simple Italian near the centre",est:30},
+    {ico:"🥂",meal:"Aperitivo", name:"Brera wine bar",        desc:"Milan essentially invented aperitivo hour. Take it seriously here.",est:20},
+    {ico:"🍝",meal:"Dinner",    name:"Brera trattoria",       desc:"Risotto alla Milanese, Cotoletta, Ossobuco. Book ahead — Saturday night.",est:70},
+   ],
+   tip:"Duomo rooftop: book elevator tickets online in advance. Brera is the neighbourhood — pick a restaurant with a long menu and a full room.",
+  },
+  {id:14,label:"Day 14", date:"Sun 22 Nov", city:"Milan",     cityId:"milan",     flag:"🇮🇹", load:"heavy",    leg:null,
+   summary:"The Last Supper in the morning, then Malpensa Express to catch SQ377 back home to Singapore overnight.",
+   acts:[
+    {ico:"🖼️",time:"Morning", name:"The Last Supper",              desc:"Leonardo da Vinci (1495) in the refectory of Santa Maria delle Grazie. Must be booked months ahead at vivaticket.com. Visits are 15 min — genuinely unforgettable."},
+    {ico:"🚆",time:"Midday",  name:"Malpensa Express",              desc:"From Milano Centrale — ~52 min, ~SGD 20. SQ uses Terminal 1. Allow plenty of time — MXP security can be slow."},
+    {ico:"✈️",time:"Fly out", name:"SQ377 · Milan → Singapore",    desc:"Singapore Airlines SQ377 departs Milan Malpensa (MXP). Long-haul overnight back to Singapore Changi. Arrive next morning."},
+   ],
+   food:[
+    {ico:"☕",meal:"Breakfast", name:"Final espresso at the bar", desc:"Standing, one last time. The ritual.",est:5},
+    {ico:"🥗",meal:"Lunch",     name:"Near Last Supper or airport", desc:"Keep it light — long flight home ahead",est:25},
+   ],
+   tip:"Book The Last Supper NOW at vivaticket.com — slots fill months ahead. Malpensa Express runs every 30 min from Centrale. Don't cut it close.",
+  },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let selectedDay = 1;
+let activeTab = "overview"; // overview | itinerary | budget
+let editingItem = null;
+
+let transportSel = {
+  "munich-salzburg":0,"salzburg-hallstatt":0,"hallstatt-innsbruck":0,
+  "innsbruck-bolzano":0,"bolzano-verona":0,"verona-milan":0
+};
+let accommodations = Object.fromEntries(CITIES.map(c=>[c.id,{name:"",price:150,booked:false,link:""}]));
+let dayCosts = Object.fromEntries(DAYS.map(d=>[d.id,{food:75,activities:20,other:0}]));
+let dayEdits = {}; // {[dayId]: {acts:[...], food:[...]}}
+
+function getDayActs(day){ return dayEdits[day.id]?.acts ?? day.acts; }
+function getDayFood(day){ return dayEdits[day.id]?.food ?? day.food; }
+
+function saveLocal(){
+  try{ localStorage.setItem(SK, JSON.stringify({transportSel,accommodations,dayCosts,dayEdits})); }catch(e){}
+}
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(SK);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    if(d.transportSel)  transportSel  = {...transportSel, ...d.transportSel};
+    if(d.accommodations)accommodations = {...accommodations,...d.accommodations};
+    if(d.dayCosts)      dayCosts       = {...dayCosts,      ...d.dayCosts};
+    if(d.dayEdits)      dayEdits       = {...dayEdits,       ...d.dayEdits};
+  }catch(e){}
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function getTransportCost(day){
+  if(!day.leg) return 0;
+  const opt = LEGS[day.leg]?.opts[transportSel[day.leg]||0];
+  if(!opt || opt.min===0) return 0;
+  return Math.round((opt.min+opt.max)/2);
+}
+function getDayTotal(day){
+  const c = dayCosts[day.id] || {food:75,activities:20,other:0};
+  const a = accommodations[day.cityId] || {price:150};
+  return getTransportCost(day)+(parseFloat(a.price)||0)+(parseFloat(c.food)||0)+(parseFloat(c.activities)||0)+(parseFloat(c.other)||0);
+}
+function getGrandTotal(){ return DAYS.reduce((s,d)=>s+getDayTotal(d),0); }
+function lc(l){ return l==="light"?"#3dd68c":l==="moderate"?"#fbbf24":"#fb7185"; }
+function ll(l){ return l==="light"?"Easy day":l==="moderate"?"Travel day":"Busy day"; }
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById("app").innerHTML = buildApp();
+  attachEvents();
+}
+
+function buildApp(){
+  // mobile drawer contents
+  let drawer = "";
+  CITIES.forEach(city=>{
+    const cd = DAYS.filter(d=>d.cityId===city.id);
+    drawer += `<div class="city-hdr">${city.flag} ${city.name}</div>`;
+    cd.forEach(d=>{
+      drawer += `<div class="day-row ${d.id===selectedDay?"sel":""}" data-dayid="${d.id}" data-closedrawer="1">
+        <span class="dn">${d.label}</span><span class="dl">${d.date}</span>
+        <span class="ldot" style="background:${lc(d.load)}"></span></div>`;
+    });
+  });
+
+  return `
+  <div class="hdr">
+    <div>
+      <div class="hdr-brand">Munich <span style="color:var(--muted);font-size:.8em">→</span> Milan</div>
+      <div class="hdr-sub">9–22 Nov 2026 · 14 Days</div>
+    </div>
+    <div class="tabs">
+      <button class="tbtn ${activeTab==="overview" ?"on":""}" data-tab="overview" >✦ Overview</button>
+      <button class="tbtn ${activeTab==="itinerary"?"on":""}" data-tab="itinerary">🗺 Days</button>
+      <button class="tbtn ${activeTab==="budget"   ?"on":""}" data-tab="budget"   >💰 Budget</button>
+    </div>
+  </div>
+  <div class="body">
+    ${activeTab==="overview"?buildOverview():activeTab==="itinerary"?buildItinerary():buildBudget()}
+  </div>
+  <div class="mob-overlay" id="mob-overlay"></div>
+  <div class="mob-drawer" id="mob-drawer">
+    <div class="mob-drawer-hdr">
+      <span class="mob-drawer-title">All Days</span>
+      <button class="mob-drawer-close" id="mob-drawer-close">✕</button>
+    </div>
+    <div class="mob-drawer-scroll">${drawer}</div>
+  </div>`;
+}
+
+// ─── OVERVIEW ────────────────────────────────────────────────────────────────
+function buildOverview(){
+  const grand = getGrandTotal();
+
+  const cityCards = CITIES.map(c=>{
+    const url = `https://images.unsplash.com/photo-${c.img}?auto=format&fit=crop&w=400&q=70`;
+    return `<div class="ov-city-card">
+      <img src="${url}" alt="${c.name}" loading="lazy" onerror="this.parentElement.style.background='var(--sur3)';this.remove()"/>
+      <div class="ov-city-flag">${c.flag}</div>
+      <div class="ov-city-overlay">
+        <div class="ov-city-name">${c.name}</div>
+        <div class="ov-city-nights">${c.nights} nights</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  const route = CITIES.map(c=>`<span style="font-size:13px;font-weight:500;color:var(--txt);">${c.flag} ${c.name}</span>`)
+    .join(`<span style="font-size:11px;color:var(--dim);padding:0 5px;">→</span>`);
+
+  const highlights = [
+    {i:"✈️", t:"SQ328 · Singapore → Munich / SQ377 · Milan → Singapore",
+              d:"Fly in on SQ328 arriving MUC. Fly home on SQ377 departing MXP Terminal 1."},
+    {i:"🚗", t:"3-day Alpine Drive: Salzburg → Hallstatt → Innsbruck",
+              d:"Pick up the rental car in Salzburg, take the scenic Salzkammergut and Kitzbühel route, drop it off in Innsbruck. Buy Austrian vignette (~€15)."},
+    {i:"🚂", t:"Brenner Pass Train — Austria into Italy",
+              d:"ÖBB/Trenitalia Innsbruck → Bolzano. One of Europe's most scenic rail journeys — alpine villages, culture shifting south."},
+    {i:"🧊", t:"Ötzi the 5,300-year-old Iceman — Bolzano",
+              d:"The world's oldest natural human mummy, found in the Alps in 1991. In the South Tyrol Museum of Archaeology. Pre-book."},
+    {i:"🎨", t:"The Last Supper — book immediately",
+              d:"Leonardo's 1495 mural in Milan. Visits are strictly 15 min. Slots fill months ahead. Book now at vivaticket.com."},
+    {i:"🗓️", t:"November: Europe's best-kept secret",
+              d:"Extremely low crowds everywhere. Hallstatt, Innsbruck and Verona almost entirely empty of tourists. Crisp, atmospheric, often snowy peaks."},
+  ];
+
+  const legCards = Object.entries(LEGS).map(([k,v])=>{
+    const parts = k.split("-");
+    const fromId = parts[0];
+    const toId   = parts.slice(1).join("-");
+    const opt  = v.opts[transportSel[k]||0];
+    const fc   = CITIES.find(c=>c.id===fromId);
+    const tc   = CITIES.find(c=>c.id===toId);
+    const cost = opt.min===0 ? "Incl. in rental" : `SGD ${opt.min}–${opt.max}`;
+    return `<div class="ov-leg">
+      <div class="ov-leg-route">${fc?.flag||""} ${fc?.name||fromId} → ${tc?.flag||""} ${tc?.name||toId}</div>
+      <div class="ov-leg-detail">${opt.ico} ${opt.lbl} · ${opt.dur} · ${cost}</div>
+    </div>`;
+  }).join("");
+
+  const dayListRows = DAYS.map(d=>`
+    <div class="ov-day-row">
+      <span class="ov-day-label">${d.label}</span>
+      <span class="ov-day-city">${d.flag} ${d.city}</span>
+      <span class="ov-day-summary">${esc(d.summary)}</span>
+    </div>`).join("");
+
+  return `<div class="overview">
+    <div class="ov-hero">
+      <div class="ov-kicker">14 Days · November 2026</div>
+      <div class="ov-title">Munich<br/>to Milan</div>
+      <div class="ov-subtitle">Mon 9 Nov – Sun 22 Nov · 7 cities · 3 countries · 1 epic alpine drive</div>
+      <div class="ov-flights">
+        <div class="ov-flight">
+          <div class="ov-fl-ico">✈️</div>
+          <div><div class="ov-fl-num">SQ328</div><div class="ov-fl-route">Singapore → Munich (MUC) · Day 1</div></div>
+        </div>
+        <div class="ov-flight">
+          <div class="ov-fl-ico">✈️</div>
+          <div><div class="ov-fl-num">SQ377</div><div class="ov-fl-route">Milan Malpensa (MXP) → Singapore · Day 14</div></div>
+        </div>
+      </div>
+      <div class="ov-stats">
+        <div class="ov-stat"><div class="ov-stat-val">14</div><div class="ov-stat-lbl">Total days</div></div>
+        <div class="ov-stat"><div class="ov-stat-val">7</div><div class="ov-stat-lbl">Cities</div></div>
+        <div class="ov-stat"><div class="ov-stat-val">3</div><div class="ov-stat-lbl">Driving days</div></div>
+        <div class="ov-stat"><div class="ov-stat-val" style="font-size:18px;">SGD ${Math.round(grand/14)}</div><div class="ov-stat-lbl">Est. per day</div></div>
+        <div class="ov-stat"><div class="ov-stat-val" style="font-size:18px;">SGD ${Math.round(grand).toLocaleString()}</div><div class="ov-stat-lbl">Est. total</div></div>
+        <div class="ov-stat"><div class="ov-stat-val">Nov</div><div class="ov-stat-lbl">Low season ✓</div></div>
+      </div>
+    </div>
+
+    <div class="ov-cities-grid">${cityCards}</div>
+
+    <div class="ov-section">
+      <div class="sec-title">Route</div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:0;">${route}</div>
+    </div>
+
+    <div class="ov-section">
+      <div class="sec-title">Highlights</div>
+      <div class="ov-highlights">
+        ${highlights.map(h=>`<div class="ov-hl"><span class="ov-hl-ico">${h.i}</span><div class="ov-hl-body"><strong>${h.t}</strong><span>${h.d}</span></div></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="ov-section">
+      <div class="sec-title">Transport Plan</div>
+      <div class="ov-legs">${legCards}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">
+        💡 Pick up rental car in Salzburg, drop in Innsbruck (3–4 days). Avoids expensive cross-border fees into Italy. Austrian vignette sticker required (~€15 for 10 days).
+      </div>
+    </div>
+
+    <div class="ov-section">
+      <div class="sec-title">Day-by-Day at a Glance</div>
+      <div class="ov-days-list">${dayListRows}</div>
+    </div>
+
+    <div style="height:28px;"></div>
+  </div>`;
+}
+
+// ─── ITINERARY ────────────────────────────────────────────────────────────────
+function buildItinerary(){
+  const day = DAYS.find(d=>d.id===selectedDay);
+  let sb = '<div class="sb">';
+  CITIES.forEach(city=>{
+    const cd = DAYS.filter(d=>d.cityId===city.id);
+    sb += `<div class="city-hdr">${city.flag} ${city.name}</div>`;
+    cd.forEach(d=>{
+      sb += `<div class="day-row ${d.id===selectedDay?"sel":""}" data-dayid="${d.id}">
+        <span class="dn">${d.label}</span><span class="dl">${d.date}</span>
+        <span class="ldot" style="background:${lc(d.load)}"></span></div>`;
+    });
+  });
+  sb += '</div>';
+  return sb + `<div class="detail">${buildDayDetail(day)}</div>`;
+}
+
+function buildDayDetail(day){
+  const accom  = accommodations[day.cityId] || {name:"",price:150,booked:false,link:""};
+  const total  = getDayTotal(day);
+  const sugs   = ACCOM_SUGS[day.cityId] || [];
+  const nights = DAYS.filter(d=>d.cityId===day.cityId).length;
+
+  // transport
+  let transHtml = "";
+  if(day.leg && LEGS[day.leg]){
+    const leg    = LEGS[day.leg];
+    const selIdx = transportSel[day.leg] || 0;
+    const selOpt = leg.opts[selIdx];
+    const opts   = leg.opts.map((o,i)=>
+      `<button class="t-opt ${i===selIdx?"on":""}" data-leg="${day.leg}" data-idx="${i}">${o.ico} ${o.lbl}</button>`
+    ).join("");
+    const costStr = selOpt.min===0 ? "Incl. in rental" : `SGD ${selOpt.min}–${selOpt.max}`;
+    transHtml = `<div class="sec"><div class="sec-title">Getting Here</div>
+      <div class="t-card">
+        <div class="t-opts">${opts}</div>
+        <div class="t-row"><span class="t-dur">⏱ ${selOpt.dur}</span><span class="t-cost">${costStr}</span></div>
+        ${selOpt.note?`<div class="t-note">💡 ${selOpt.note}</div>`:""}
+      </div></div>`;
+  }
+
+  // activities
+  const acts = getDayActs(day);
+  const actsHtml = acts.map((a,i)=>{
+    if(editingItem?.type==="act"&&editingItem.dayId===day.id&&editingItem.idx===i){
+      return `<div class="edit-card">
+        <div class="edit-row">
+          <span class="edit-lbl">Icon</span>
+          <input class="edit-inp emoji" id="ei-ico" value="${esc(a.ico)}" maxlength="4"/>
+          <span class="edit-lbl" style="width:36px;">Time</span>
+          <input class="edit-inp" id="ei-time" value="${esc(a.time)}" placeholder="Morning" style="max-width:130px;"/>
+        </div>
+        <div class="edit-row">
+          <span class="edit-lbl">Title</span>
+          <input class="edit-inp" id="ei-name" value="${esc(a.name)}" placeholder="Activity name"/>
+        </div>
+        <div class="edit-row" style="align-items:flex-start;">
+          <span class="edit-lbl" style="margin-top:6px;">Notes</span>
+          <textarea class="edit-ta" id="ei-desc">${esc(a.desc)}</textarea>
+        </div>
+        <div class="edit-actions">
+          <button class="ebtn ebtn-save" data-save="act" data-idx="${i}">Save</button>
+          <button class="ebtn ebtn-cancel" data-cancel>Cancel</button>
+          <button class="ebtn ebtn-del" data-del="act" data-idx="${i}">Delete</button>
+        </div>
+      </div>`;
+    }
+    return `<div class="act" data-open="act" data-idx="${i}">
+      <span class="act-ico">${a.ico}</span>
+      <div style="flex:1;min-width:0;">
+        <div class="act-time">${esc(a.time)}</div>
+        <div class="act-name">${esc(a.name)}</div>
+        <div class="act-desc">${esc(a.desc)}</div>
+      </div>
+      <span class="eh">✏</span>
+    </div>`;
+  }).join("");
+
+  // food
+  const food = getDayFood(day);
+  const foodHtml = food.map((f,i)=>{
+    if(editingItem?.type==="food"&&editingItem.dayId===day.id&&editingItem.idx===i){
+      return `<div class="edit-card">
+        <div class="edit-row">
+          <span class="edit-lbl">Icon</span>
+          <input class="edit-inp emoji" id="fi-ico" value="${esc(f.ico)}" maxlength="4"/>
+          <span class="edit-lbl" style="width:40px;">Meal</span>
+          <input class="edit-inp" id="fi-meal" value="${esc(f.meal)}" placeholder="Lunch" style="max-width:110px;"/>
+          <span class="edit-lbl" style="width:36px;">SGD</span>
+          <input class="edit-inp" id="fi-est" type="number" value="${f.est}" style="max-width:70px;"/>
+        </div>
+        <div class="edit-row">
+          <span class="edit-lbl">Name</span>
+          <input class="edit-inp" id="fi-name" value="${esc(f.name)}" placeholder="Restaurant / venue"/>
+        </div>
+        <div class="edit-row" style="align-items:flex-start;">
+          <span class="edit-lbl" style="margin-top:6px;">Notes</span>
+          <textarea class="edit-ta" id="fi-desc">${esc(f.desc)}</textarea>
+        </div>
+        <div class="edit-actions">
+          <button class="ebtn ebtn-save" data-save="food" data-idx="${i}">Save</button>
+          <button class="ebtn ebtn-cancel" data-cancel>Cancel</button>
+          <button class="ebtn ebtn-del" data-del="food" data-idx="${i}">Delete</button>
+        </div>
+      </div>`;
+    }
+    return `<div class="food-row" data-open="food" data-idx="${i}">
+      <div class="food-l">
+        <span class="food-ico">${f.ico}</span>
+        <div>
+          <div class="food-meal">${esc(f.meal)}</div>
+          <div class="food-name">${esc(f.name)}</div>
+          <div class="food-desc">${esc(f.desc)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <span class="food-sgd">~SGD ${f.est}</span>
+        <span class="eh">✏</span>
+      </div>
+    </div>`;
+  }).join("");
+
+  const sugBtns = sugs.map(s=>`<button class="sg-btn" data-sugest="${esc(s)}" data-cityid="${day.cityId}">${s}</button>`).join("");
+
+  return `
+  <div class="mob-nav">
+    <button class="arr-btn" data-dir="-1" ${selectedDay===1?"disabled":""}>←</button>
+    <button class="mob-days-btn" id="mob-days-open">${day.label} · ${day.city} ▾</button>
+    <button class="arr-btn" data-dir="1"  ${selectedDay===14?"disabled":""}>→</button>
+  </div>
+
+  <div style="margin-bottom:6px;">
+    <div style="font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;">${day.label} · ${day.date}</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;line-height:1.05;color:var(--txt);">
+      <em style="color:var(--goldl);font-style:italic;">${day.flag}</em> ${day.city}
+    </div>
+    <div class="chips">
+      <span class="badge" style="color:${lc(day.load)};background:${lc(day.load)}18;border-color:${lc(day.load)}40;">
+        <span class="badge-dot" style="background:${lc(day.load)}"></span>${ll(day.load)}
+      </span>
+      <span class="chip">Est. <strong>SGD ${Math.round(total)}</strong> today</span>
+    </div>
+  </div>
+
+  <div class="day-summary">${esc(day.summary)}</div>
+
+  ${transHtml}
+
+  <div class="sec">
+    <div class="sec-title">Day Plan</div>
+    <div class="acts">${actsHtml}</div>
+    <button class="add-btn" data-add="act">＋ Add activity</button>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Food &amp; Drink</div>
+    <div class="foods">${foodHtml}</div>
+    <button class="add-btn" data-add="food">＋ Add food / drink</button>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Accommodation — ${day.city}${nights>1?` (${nights} nights)`:""}</div>
+    <div class="accom-card">
+      <div class="inp-row">
+        <span class="inp-lbl">Hotel</span>
+        <input class="t-inp" type="text" placeholder="${sugs[0]||"Hotel name"}" value="${esc(accom.name)}" data-accom="name" data-cityid="${day.cityId}"/>
+      </div>
+      <div class="inp-row">
+        <span class="inp-lbl">SGD/night</span>
+        <input class="t-inp" type="number" placeholder="150" value="${accom.price||""}" data-accom="price" data-cityid="${day.cityId}" style="max-width:100px;"/>
+        <label class="booked-lbl" data-toggle-city="${day.cityId}">
+          <span class="chk ${accom.booked?"on":""}">${accom.booked?"✓":""}</span>Booked
+        </label>
+      </div>
+      <div class="inp-row">
+        <span class="inp-lbl">Link</span>
+        <input class="t-inp" type="url" placeholder="Booking.com / Agoda URL" value="${esc(accom.link||"")}" data-accom="link" data-cityid="${day.cityId}"/>
+      </div>
+      ${sugs.length?`<div class="suggest-row">${sugBtns}</div>`:""}
+    </div>
+  </div>
+
+  ${day.tip?`<div class="sec"><div class="tip"><span style="font-size:14px;flex-shrink:0;">💡</span><span>${esc(day.tip)}</span></div></div>`:""}
+  `;
+}
+
+// ─── BUDGET ───────────────────────────────────────────────────────────────────
+function buildBudget(){
+  const rows = DAYS.map(day=>{
+    const accom = accommodations[day.cityId]||{price:150};
+    const c     = dayCosts[day.id]||{food:75,activities:20,other:0};
+    let transD  = "—";
+    if(day.leg){
+      const opt = LEGS[day.leg].opts[transportSel[day.leg]||0];
+      transD = opt.min===0
+        ? `<span style="color:var(--muted);font-size:10px">Car (incl.)</span>`
+        : `${opt.min}–${opt.max}`;
+    }
+    return `<tr data-click-day="${day.id}">
+      <td><div class="b-dc">${day.flag} ${day.label} · ${day.city}</div><div class="b-dc2">${day.date}</div></td>
+      <td style="text-align:right;"><input class="b-inp" type="number" value="${accom.price||""}" placeholder="150" data-b-accom="${day.cityId}"/></td>
+      <td style="text-align:right;color:var(--muted);font-size:11px;">${transD}</td>
+      <td style="text-align:right;"><input class="b-inp" type="number" value="${c.food||""}"       placeholder="75"  data-b-cost="${day.id}" data-b-field="food"/></td>
+      <td style="text-align:right;"><input class="b-inp" type="number" value="${c.activities||""}" placeholder="20"  data-b-cost="${day.id}" data-b-field="activities"/></td>
+      <td style="text-align:right;"><input class="b-inp" type="number" value="${c.other||""}"      placeholder="0"   data-b-cost="${day.id}" data-b-field="other"/></td>
+      <td class="b-tot">${Math.round(getDayTotal(day))}</td>
+    </tr>`;
+  }).join("");
+
+  const grand = getGrandTotal();
+  const avg   = Math.round(grand/14);
+
+  return `<div class="budget">
+    <div class="bscroll">
+      <table class="btable">
+        <thead><tr>
+          <th>Day</th>
+          <th style="text-align:right;">Accom (SGD)</th>
+          <th style="text-align:right;">Transport</th>
+          <th style="text-align:right;">Food</th>
+          <th style="text-align:right;">Activities</th>
+          <th style="text-align:right;">Other</th>
+          <th style="text-align:right;">Total</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="gtotal">
+      <div>
+        <div class="gt-lbl">Estimated Trip Total</div>
+        <div class="gt-sub">Per person · excl. flights from Singapore</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="gt-amt" id="grand-total">SGD ${Math.round(grand).toLocaleString()}</div>
+        <div class="gt-per">≈ SGD ${avg} / day avg</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── EVENTS ──────────────────────────────────────────────────────────────────
+function attachEvents(){
+  // tabs
+  document.querySelectorAll(".tbtn").forEach(btn=>{
+    btn.addEventListener("click",()=>{ activeTab=btn.dataset.tab; editingItem=null; render(); });
+  });
+
+  // sidebar day rows (desktop)
+  document.querySelectorAll(".sb .day-row").forEach(row=>{
+    row.addEventListener("click",()=>{ selectedDay=parseInt(row.dataset.dayid); editingItem=null; render(); });
+  });
+
+  // prev / next
+  document.querySelectorAll(".arr-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const n = selectedDay + parseInt(btn.dataset.dir);
+      if(n>=1&&n<=14){ selectedDay=n; editingItem=null; render(); }
+    });
+  });
+
+  // mobile drawer
+  const drawer  = document.getElementById("mob-drawer");
+  const overlay = document.getElementById("mob-overlay");
+  const openD   = ()=>{ drawer?.classList.add("open"); overlay?.classList.add("open"); };
+  const closeD  = ()=>{ drawer?.classList.remove("open"); overlay?.classList.remove("open"); };
+  document.getElementById("mob-days-open")  ?.addEventListener("click", openD);
+  document.getElementById("mob-drawer-close")?.addEventListener("click", closeD);
+  overlay?.addEventListener("click", closeD);
+  document.querySelectorAll("[data-closedrawer]").forEach(row=>{
+    row.addEventListener("click",()=>{
+      selectedDay=parseInt(row.dataset.dayid); editingItem=null; closeD(); render();
+    });
+  });
+
+  // transport
+  document.querySelectorAll(".t-opt").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      transportSel[btn.dataset.leg]=parseInt(btn.dataset.idx);
+      saveLocal(); render();
+    });
+  });
+
+  // accommodation text inputs
+  document.querySelectorAll("[data-accom]").forEach(inp=>{
+    inp.addEventListener("input",()=>{
+      const cId=inp.dataset.cityid, field=inp.dataset.accom;
+      accommodations[cId]={...accommodations[cId],[field]:field==="price"?(parseFloat(inp.value)||0):inp.value};
+      saveLocal();
+    });
+  });
+  document.querySelectorAll("[data-toggle-city]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const cId=el.dataset.toggleCity;
+      accommodations[cId]={...accommodations[cId],booked:!accommodations[cId].booked};
+      saveLocal(); render();
+    });
+  });
+  document.querySelectorAll(".sg-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      accommodations[btn.dataset.cityid]={...accommodations[btn.dataset.cityid],name:btn.dataset.sugest};
+      saveLocal(); render();
+    });
+  });
+
+  // inline edit: open
+  document.querySelectorAll("[data-open]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const day=DAYS.find(d=>d.id===selectedDay);
+      editingItem={type:el.dataset.open, dayId:day.id, idx:parseInt(el.dataset.idx)};
+      render();
+    });
+  });
+  // cancel
+  document.querySelectorAll("[data-cancel]").forEach(btn=>{
+    btn.addEventListener("click",()=>{ editingItem=null; render(); });
+  });
+  // save act
+  document.querySelectorAll("[data-save='act']").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const day=DAYS.find(d=>d.id===selectedDay);
+      const i=parseInt(btn.dataset.idx);
+      const acts=[...getDayActs(day)];
+      acts[i]={
+        ico:  document.getElementById("ei-ico") .value||"📍",
+        time: document.getElementById("ei-time").value,
+        name: document.getElementById("ei-name").value||"Untitled",
+        desc: document.getElementById("ei-desc").value,
+      };
+      dayEdits[day.id]={...dayEdits[day.id],acts};
+      editingItem=null; saveLocal(); render();
+    });
+  });
+  // save food
+  document.querySelectorAll("[data-save='food']").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const day=DAYS.find(d=>d.id===selectedDay);
+      const i=parseInt(btn.dataset.idx);
+      const food=[...getDayFood(day)];
+      food[i]={
+        ico:  document.getElementById("fi-ico") .value||"🍽️",
+        meal: document.getElementById("fi-meal").value,
+        name: document.getElementById("fi-name").value||"Untitled",
+        desc: document.getElementById("fi-desc").value,
+        est:  parseFloat(document.getElementById("fi-est").value)||0,
+      };
+      dayEdits[day.id]={...dayEdits[day.id],food};
+      editingItem=null; saveLocal(); render();
+    });
+  });
+  // delete act
+  document.querySelectorAll("[data-del='act']").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const day=DAYS.find(d=>d.id===selectedDay);
+      const acts=getDayActs(day).filter((_,i)=>i!==parseInt(btn.dataset.idx));
+      dayEdits[day.id]={...dayEdits[day.id],acts};
+      editingItem=null; saveLocal(); render();
+    });
+  });
+  // delete food
+  document.querySelectorAll("[data-del='food']").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const day=DAYS.find(d=>d.id===selectedDay);
+      const food=getDayFood(day).filter((_,i)=>i!==parseInt(btn.dataset.idx));
+      dayEdits[day.id]={...dayEdits[day.id],food};
+      editingItem=null; saveLocal(); render();
+    });
+  });
+  // add act
+  document.querySelectorAll("[data-add='act']").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const day=DAYS.find(d=>d.id===selectedDay);
+      const acts=[...getDayActs(day),{ico:"📍",time:"",name:"New activity",desc:""}];
+      dayEdits[day.id]={...dayEdits[day.id],acts};
+      editingItem={type:"act",dayId:day.id,idx:acts.length-1};
+      saveLocal(); render();
+    });
+  });
+  // add food
+  document.querySelectorAll("[data-add='food']").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const day=DAYS.find(d=>d.id===selectedDay);
+      const food=[...getDayFood(day),{ico:"🍽️",meal:"",name:"New entry",desc:"",est:0}];
+      dayEdits[day.id]={...dayEdits[day.id],food};
+      editingItem={type:"food",dayId:day.id,idx:food.length-1};
+      saveLocal(); render();
+    });
+  });
+
+  // budget accom
+  document.querySelectorAll("[data-b-accom]").forEach(inp=>{
+    inp.addEventListener("click",e=>e.stopPropagation());
+    inp.addEventListener("input",()=>{
+      const cId=inp.dataset.bAccom;
+      accommodations[cId]={...accommodations[cId],price:parseFloat(inp.value)||0};
+      saveLocal();
+      DAYS.filter(d=>d.cityId===cId).forEach(d=>{
+        const tot=document.querySelector(`tr[data-click-day="${d.id}"] .b-tot`);
+        if(tot) tot.textContent=Math.round(getDayTotal(d));
+      });
+      updateGrandTotal();
+    });
+  });
+  // budget costs
+  document.querySelectorAll("[data-b-cost]").forEach(inp=>{
+    inp.addEventListener("click",e=>e.stopPropagation());
+    inp.addEventListener("input",()=>{
+      const dId=parseInt(inp.dataset.bCost), field=inp.dataset.bField;
+      dayCosts[dId]={...dayCosts[dId],[field]:parseFloat(inp.value)||0};
+      saveLocal();
+      const d=DAYS.find(x=>x.id===dId);
+      const tot=document.querySelector(`tr[data-click-day="${dId}"] .b-tot`);
+      if(tot&&d) tot.textContent=Math.round(getDayTotal(d));
+      updateGrandTotal();
+    });
+  });
+  // budget row click → go to day
+  document.querySelectorAll("tr[data-click-day]").forEach(tr=>{
+    tr.addEventListener("click",()=>{
+      selectedDay=parseInt(tr.dataset.clickDay); activeTab="itinerary"; editingItem=null; render();
+    });
+  });
+}
+
+function updateGrandTotal(){
+  const grand=getGrandTotal();
+  const el=document.getElementById("grand-total");
+  if(el) el.textContent=`SGD ${Math.round(grand).toLocaleString()}`;
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+loadLocal();
+render();
+</script>
+</body>
+</html>
